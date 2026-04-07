@@ -6,6 +6,7 @@ import ge.ibsu.demo.entities.Employee;
 import ge.ibsu.demo.repositories.EmployeeRepository;
 import ge.ibsu.demo.utils.GeneralUtil;
 import jakarta.transaction.Transactional;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -28,8 +29,8 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee getById(Long id) throws Exception {
-        return employeeRepository.findById(id).orElseThrow(() -> new Exception("EMPLOYEE_NOT_FOUND"));
+    public Employee getById(Long id) throws ResourceNotFoundException {
+        return employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("EMPLOYEE_NOT_FOUND"));
     }
 
     @Transactional
@@ -41,11 +42,7 @@ public class EmployeeService {
             employee = getById(id);
         }
 
-        employee.setFirstName(data.getFirstName());
-        employee.setLastName(data.getLastName());
-        employee.setEmail(data.getEmail());
-        employee.setPhone(data.getPhone());
-        employee.setSalary(data.getSalary());
+        GeneralUtil.getCopyOf(data, employee);
         employee.setHireDate(new Date());
 
         Department department = this.departmentService.getById(data.getDepartmentId());
