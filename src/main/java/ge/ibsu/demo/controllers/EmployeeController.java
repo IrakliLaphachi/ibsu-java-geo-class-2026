@@ -1,8 +1,12 @@
 package ge.ibsu.demo.controllers;
 
 import ge.ibsu.demo.dto.AddEmployee;
+import ge.ibsu.demo.dto.EmployeeContactInfo;
+import ge.ibsu.demo.dto.RequestData;
+import ge.ibsu.demo.dto.SearchEmployee;
 import ge.ibsu.demo.entities.Employee;
 import ge.ibsu.demo.services.EmployeeService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,5 +39,15 @@ public class EmployeeController {
     @PutMapping("/{id}")
     public Employee edit(@PathVariable Long id, @RequestBody AddEmployee addEmployee) throws Exception {
         return employeeService.saveEmployee(addEmployee, id);
+    }
+
+    @PostMapping("/search")
+    public Page<Employee> search(@RequestBody RequestData<SearchEmployee> rd) {
+        return employeeService.search(rd.getData(), rd.getPaging());
+    }
+
+    @PostMapping("/searchContactInfo")
+    public EmployeeContactInfo searchContactInfo(@RequestBody RequestData<SearchEmployee> rd) {
+        return employeeService.getEmployeeContacts(rd.getData());
     }
 }
